@@ -1,0 +1,64 @@
+name: pkos-dev
+services:
+  chroma:
+    image: chromadb/chroma:0.5.0
+    ports:
+      - "8000:8000"
+    volumes:
+      - chroma_data:/chroma/chroma
+    environment:
+      - CHROMA_SERVER_HOST=0.0.0.0
+
+  streamlit:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8501:8501"
+    volumes:
+      - ./src:/app/src
+      - pkos_uploads:/app/uploads
+      - pkos_chroma:/app/chroma
+    environment:
+      - SUPABASE_URL=${SUPABASE_URL}
+      - SUPABASE_ANON_KEY=${SUPABASE_ANON_KEY}
+      - SUPABASE_SERVICE_ROLE_KEY=${SUPABASE_SERVICE_ROLE_KEY}
+      - MODEL=${MODEL:-meta/llama-3.2-3b-instruct}
+      - NVIDIA_API_KEY=${NVIDIA_API_KEY}
+      - OPENAI_BASE_URL=${OPENAI_BASE_URL}
+      - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
+      - SMTP_HOST=${SMTP_HOST}
+      - SMTP_PORT=${SMTP_PORT}
+      - SMTP_USER=${SMTP_USER}
+      - SMTP_PASSWORD=${SMTP_PASSWORD}
+      - SMTP_FROM=${SMTP_FROM}
+    depends_on:
+      - chroma
+
+  telegram:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: python -m pkos.telegram_bot
+    volumes:
+      - ./src:/app/src
+      - pkos_uploads:/app/uploads
+      - pkos_chroma:/app/chroma
+    environment:
+      - SUPABASE_URL=${SUPABASE_URL}
+      - SUPABASE_ANON_KEY=${SUPABASE_ANON_KEY}
+      - SUPABASE_SERVICE_ROLE_KEY=${SUPABASE_SERVICE_ROLE_KEY}
+      - MODEL=${MODEL:-meta/llama-3.2-3b-instruct}
+      - NVIDIA_API_KEY=${NVIDIA_API_KEY}
+      - OPENAI_BASE_URL=${OPENAI_BASE_URL}
+      - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
+      - TELEGRAM_ALLOWED_CHAT_IDS=${TELEGRAM_ALLOWED_CHAT_IDS}
+      - PKOS_USER_ID=${PKOS_USER_ID:-default_user}
+    depends_on:
+      - chroma
+    restart: unless-stopped
+
+volumes:
+  chroma_data:
+  pkos_uploads:
+  pkos_chroma:

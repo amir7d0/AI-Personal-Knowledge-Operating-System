@@ -1,0 +1,33 @@
+app:
+  name: PKOS
+  version: 0.1.0
+  user_id: default_user
+
+db:
+  provider: sqlite
+  sqlite_path: data/pkos_local.db
+  # Supabase URL/keys stay in .env (secret)
+
+llm:
+  provider: openai
+  model: meta/llama-3.2-3b-instruct
+  base_url: https://integrate.api.nvidia.com/v1
+  # API key stays in .env (secret)
+
+embeddings:
+  provider: nvidia
+  model: nvidia/nv-embed-v1
+  api_url: https://integrate.api.nvidia.com/v1/embeddings
+  # API key stays in .env (NVIDIA_API_KEY or OPENAI_API_KEY)
+
+chroma:
+  persist_dir: data/chroma
+
+uploads:
+  dir: data/uploads
+
+telegram:
+  # Token and allowed_chat_ids stay in .env (secret)
+
+email:
+  # SMTP creds stay in .env (secret)
