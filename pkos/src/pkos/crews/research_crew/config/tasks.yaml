@@ -1,0 +1,17 @@
+# write_poem:
+#   description: >
+#     Write a poem about how CrewAI is awesome.
+#     Ensure the poem is engaging and adheres to the specified sentence count of {sentence_count}.
+#   expected_output: >
+#     A beautifully crafted poem about CrewAI, with exactly {sentence_count} sentences.
+#   agent: poem_writer
+
+research_task:
+  description: >
+    Conduct thorough research about {topic}. Use your own knowledge not the web search to find current,
+    credible information. The current year is 2026.
+  expected_output: >
+    A markdown report with clear sections: key trends, notable tools or companies,
+    and implications. Aim for 800–1200 words. No fenced code blocks around the whole document.
+  agent: researcher
+  output_file: output/report.md

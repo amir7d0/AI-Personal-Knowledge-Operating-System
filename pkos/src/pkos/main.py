@@ -1,0 +1,42 @@
+from pydantic import BaseModel
+
+from crewai.flow import Flow, listen, start
+
+from pkos.src.pkos.crews.research_crew.research_crew import ResearchCrew
+
+
+class ResearchFlowState(BaseModel):
+  topic: str = ""
+  report: str = ""
+
+
+class LatestAiFlow(Flow[ResearchFlowState]):
+  @start()
+  def prepare_topic(self, crewai_trigger_payload: dict | None = None):
+    if crewai_trigger_payload:
+      self.state.topic = crewai_trigger_payload.get("topic", "coding agents")
+    else:
+      self.state.topic = "coding agents"
+    print(f"Topic: {self.state.topic}")
+
+  @listen(prepare_topic)
+  def run_research(self):
+    result = ResearchCrew().crew().kickoff(inputs={"topic": self.state.topic})
+    self.state.report = result.raw
+    print("Research crew finished.")
+
+  @listen(run_research)
+  def summarize(self):
+    print("Report path: output/report.md")
+
+
+def kickoff():
+  LatestAiFlow().kickoff()
+
+
+def plot():
+  LatestAiFlow().plot()
+
+
+if __name__ == "__main__":
+  kickoff()
