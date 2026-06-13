@@ -1,0 +1,6 @@
+{
+  "$schema": "https://app.kilo.ai/config.json",
+  "plugin": [
+    "file:///home/v4vendetta/projects/2026/AI-Personal-Knowledge-Operating-System/.kilo/plugins/graphify.js"
+  ]
+}
